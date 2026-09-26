@@ -3,25 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Final Project</title>
+  <title>DropHub</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
   <header>
-    <h1>My Final Project</h1>
+    <h1 id="brandLabel">Sign in</h1>
     <p>Group members: (add your names here)</p>
   </header>
 
+  <nav id="mainNav">
+    <button data-view="home" class="active">Home</button>
+    <button data-view="storage">Storage Manager</button>
+    <button data-view="admin">Admin Settings</button>
+  </nav>
+
   <main>
-    <section>
-      <h2>Welcome</h2>
+
+    <!-- LOGIN VIEW -->
+    <section id="loginView">
+      <h2>Connect to DropHub</h2>
+
+      <label for="userField">Username</label>
+      <input type="text" id="userField" placeholder="Enter username" />
+
+      <label for="passField">Password</label>
+      <input type="password" id="passField" placeholder="Enter password" />
+
+      <button id="connectBtn">Connect</button>
+
+      <p id="loginErr"></p>
+    </section>
+
+    <!-- HOME VIEW -->
+    <section id="view-home" class="view">
+      <h2>Welcome to DropHub</h2>
       <p>
-        This is the starter page for your final project. Replace this content
-        with your own site. When you push to your repository and enable GitHub
-        Pages, this page goes live on the internet.
+        Use the menu above to manage your files or update admin settings.
       </p>
     </section>
+
+    <!-- STORAGE MANAGER VIEW -->
+    <section id="view-storage" class="view">
+      <h2>Storage Manager</h2>
+
+      <div id="dropZone">
+        <p>Click here or drag and drop files to upload</p>
+        <input type="file" id="fileInput" multiple hidden />
+      </div>
+
+      <div id="fileList"></div>
+      <p id="emptyMsg">No files queued yet.</p>
+
+      <button id="uploadBtn">Upload</button>
+    </section>
+
+    <!-- ADMIN SETTINGS VIEW -->
+    <section id="view-admin" class="view">
+      <h2>Admin Settings</h2>
+
+      <label for="maxStorage">Max Storage (GB)</label>
+      <input type="number" id="maxStorage" placeholder="e.g. 50" />
+
+      <label for="subnet">Subnet</label>
+      <input type="text" id="subnet" placeholder="e.g. 192.168.1.0/24" />
+
+      <button id="saveConfigBtn">Save</button>
+    </section>
+
   </main>
+
+  <div id="toast"></div>
 
   <footer>
     <p>Built for the finals project.</p>
