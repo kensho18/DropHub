@@ -5,18 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DropHub</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
   <header>
-    <h1 id="brandLabel">Sign in</h1>
-    <p>Group members: (add your names here)</p>
+    <h1 class="logo"><span class="logo-icon">⬢</span>Drop<span class="logo-accent">Hub</span></h1>
   </header>
 
   <nav id="mainNav">
     <button data-view="home" class="active">Home</button>
     <button data-view="storage">Storage Manager</button>
-    <button data-view="admin">Admin Settings</button>
+    <button data-view="profile">Profile</button>
+    <button data-view="settings">Settings</button>
   </nav>
 
   <main>
@@ -24,6 +25,10 @@
     <!-- LOGIN VIEW -->
     <section id="loginView">
       <h2>Connect to DropHub</h2>
+
+      <div id="googleSignInDiv"></div>
+
+      <div class="divider"><span>OR</span></div>
 
       <label for="userField">Username</label>
       <input type="text" id="userField" placeholder="Enter username" />
@@ -40,8 +45,35 @@
     <section id="view-home" class="view">
       <h2>Welcome to DropHub</h2>
       <p>
-        Use the menu above to manage your files or update admin settings.
+        DropHub lets anyone on the same network instantly share and access
+        files, photos, and information — from any device, in a few clicks.
       </p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Fast Sharing</h3>
+          <p>Drag, drop, and upload — no long waits, no confusing steps.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Simple Access</h3>
+          <p>Sign in with Google or your account and get straight to your files.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Any Device</h3>
+          <p>Works on your laptop, phone, or tablet — same hub, every device.</p>
+        </div>
+      </div>
+
+      <div class="recent-block">
+        <h3>Recently Uploaded</h3>
+        <div id="recentList"></div>
+        <p id="recentEmpty">Nothing uploaded yet.</p>
+      </div>
+
+      <button id="goToStorageBtn" class="home-cta">Go to Storage Manager →</button>
     </section>
 
     <!-- STORAGE MANAGER VIEW -->
@@ -49,27 +81,202 @@
       <h2>Storage Manager</h2>
 
       <div id="dropZone">
-        <p>Click here or drag and drop files to upload</p>
+        <div class="drop-icon">⬆</div>
+        <p class="drop-title">Drag &amp; drop files here</p>
+        <p class="drop-sub">or click to browse your device</p>
         <input type="file" id="fileInput" multiple hidden />
       </div>
+
+      <div id="fileSummary"></div>
 
       <div id="fileList"></div>
       <p id="emptyMsg">No files queued yet.</p>
 
-      <button id="uploadBtn">Upload</button>
+      <div id="progressBarWrap">
+        <div id="progressBar"></div>
+      </div>
+
+      <div class="btn-row">
+        <button id="uploadBtn">Upload</button>
+        <button id="clearAllBtn" class="secondary-btn">Clear All</button>
+      </div>
     </section>
 
-    <!-- ADMIN SETTINGS VIEW -->
-    <section id="view-admin" class="view">
-      <h2>Admin Settings</h2>
+    <!-- SETTINGS VIEW -->
+    <section id="view-settings" class="view">
+      <h2>Settings</h2>
 
-      <label for="maxStorage">Max Storage (GB)</label>
-      <input type="number" id="maxStorage" placeholder="e.g. 50" />
+      <div class="settings-block">
+        <h3>Appearance</h3>
 
-      <label for="subnet">Subnet</label>
-      <input type="text" id="subnet" placeholder="e.g. 192.168.1.0/24" />
+        <div class="setting-row">
+          <span>Theme</span>
+          <button id="themeToggleBtn" class="toggle-switch" aria-label="Toggle light and dark mode">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
 
-      <button id="saveConfigBtn">Save</button>
+        <div class="setting-row accent-row">
+          <span>Accent color</span>
+          <div id="accentSwatches" class="swatches">
+            <button class="swatch active" data-accent="orange" style="--swatch-color:#ff7a1a" title="Orange"></button>
+            <button class="swatch" data-accent="blue" style="--swatch-color:#3b82f6" title="Blue"></button>
+            <button class="swatch" data-accent="green" style="--swatch-color:#22c55e" title="Green"></button>
+            <button class="swatch" data-accent="purple" style="--swatch-color:#a855f7" title="Purple"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-block">
+        <h3>Notifications</h3>
+        <div class="setting-row">
+          <span>Upload confirmation messages</span>
+          <button class="toggle-switch" data-setting="notifyUpload" aria-label="Upload confirmation messages">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+        <div class="setting-row">
+          <span>Alert me when new files are shared</span>
+          <button class="toggle-switch" data-setting="notifyNew" aria-label="Alert me when new files are shared">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+        <div class="setting-row">
+          <span>Play a sound on alerts</span>
+          <button class="toggle-switch" data-setting="notifySound" aria-label="Play a sound on alerts">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-block">
+        <h3>Capabilities</h3>
+        <div class="setting-row">
+          <span>Drag and drop uploads</span>
+          <button class="toggle-switch" data-setting="capDrag" aria-label="Drag and drop uploads">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+        <div class="setting-row">
+          <span>Upload multiple files at once</span>
+          <button class="toggle-switch" data-setting="capMulti" aria-label="Upload multiple files at once">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+        <div class="setting-row">
+          <span>Show Recently Uploaded on Home</span>
+          <button class="toggle-switch" data-setting="capRecent" aria-label="Show Recently Uploaded on Home">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-block">
+        <h3>Permissions</h3>
+        <div class="setting-row">
+          <span>Others on the hub can see my uploads</span>
+          <button class="toggle-switch" data-setting="permView" aria-label="Others on the hub can see my uploads">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+        <div class="setting-row">
+          <span>Others can upload to my hub</span>
+          <button class="toggle-switch" data-setting="permUpload" aria-label="Others can upload to my hub">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+        <div class="setting-row">
+          <span>Others can download my files</span>
+          <button class="toggle-switch" data-setting="permDownload" aria-label="Others can download my files">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-block wide">
+        <h3>How to Use DropHub</h3>
+        <ol class="guide-list">
+          <li><strong>Sign in</strong> — use the Google button, or type any username and password and click Connect.</li>
+          <li><strong>Go to Storage Manager</strong> — click it in the menu, or use the button on the Home page.</li>
+          <li><strong>Add files</strong> — drag and drop files onto the box, or click the box to browse your device.</li>
+          <li><strong>Review your queue</strong> — check the file list and total size; remove a file with ✕, or click Clear All to start over.</li>
+          <li><strong>Upload</strong> — click Upload and watch the progress bar. You'll get a confirmation once it's done.</li>
+          <li><strong>Customize</strong> — come back here anytime to switch Light/Dark mode or change the accent color.</li>
+        </ol>
+      </div>
+
+      <div class="settings-block wide">
+        <h3>Reset</h3>
+        <p class="settings-note">Clears any queued files and puts appearance, notification, capability, permission, and privacy settings back to default.</p>
+        <button id="resetSettingsBtn" class="secondary-btn">Reset to Default</button>
+      </div>
+    </section>
+
+    <section id="view-profile" class="view">
+      <h2>Profile</h2>
+
+      <div class="settings-block profile-form">
+        <h3>Account</h3>
+        <p class="settings-note">Signed in as <strong id="currentAccount">Guest</strong></p>
+        <label for="accountNameInput">New account name</label>
+        <input type="text" id="accountNameInput" placeholder="Enter a new account name" />
+        <button id="saveNameBtn" class="secondary-btn">Save Name</button>
+      </div>
+
+      <div class="settings-block profile-form">
+        <h3>Change Password</h3>
+        <label for="currentPassInput">Current password</label>
+        <input type="password" id="currentPassInput" placeholder="Current password" />
+        <label for="newPassInput">New password</label>
+        <input type="password" id="newPassInput" placeholder="At least 6 characters" />
+        <label for="confirmPassInput">Confirm new password</label>
+        <input type="password" id="confirmPassInput" placeholder="Type the new password again" />
+        <button id="savePasswordBtn" class="secondary-btn">Change Password</button>
+        <p id="passwordErr"></p>
+      </div>
+
+      <div class="settings-block">
+        <h3>Privacy</h3>
+        <div class="setting-row">
+          <span>Show my account name to others</span>
+          <button class="toggle-switch" data-setting="privShowName" aria-label="Show my account name to others">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+        <div class="setting-row">
+          <span>Show upload times on Home</span>
+          <button class="toggle-switch" data-setting="privShowTimes" aria-label="Show upload times on Home">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+        <div class="setting-row">
+          <span>Save my upload history</span>
+          <button class="toggle-switch" data-setting="privSaveHistory" aria-label="Save my upload history">
+            <span class="toggle-thumb"></span>
+          </button>
+        </div>
+        <div class="btn-row">
+          <button id="clearHistoryBtn" class="secondary-btn">Clear Upload History</button>
+        </div>
+      </div>
+
+      <div class="settings-block">
+        <h3>Linked Accounts</h3>
+        <div id="linkedList">
+          <div class="setting-row linked-row" data-provider="google">
+            <span class="provider"><svg class="provider-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Google</span><span class="link-status">Not linked</span></span>
+            <button class="secondary-btn link-btn">Link</button>
+          </div>
+          <div class="setting-row linked-row" data-provider="microsoft">
+            <span class="provider"><svg class="provider-logo" viewBox="0 0 23 23" aria-hidden="true"><rect width="11" height="11" fill="#f25022"/><rect x="12" width="11" height="11" fill="#7fba00"/><rect y="12" width="11" height="11" fill="#00a4ef"/><rect x="12" y="12" width="11" height="11" fill="#ffb900"/></svg><span>Microsoft</span><span class="link-status">Not linked</span></span>
+            <button class="secondary-btn link-btn">Link</button>
+          </div>
+          <div class="setting-row linked-row" data-provider="github">
+            <span class="provider"><svg class="provider-logo" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span><span class="link-status">Not linked</span></span>
+            <button class="secondary-btn link-btn">Link</button>
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>
