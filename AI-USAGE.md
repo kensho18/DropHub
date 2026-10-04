@@ -86,23 +86,31 @@ Parts I wrote myself:
 
 1. File: script.js 
    Commit: https://kensho18.github.io/DropHub/
-   What it does: Keeps one object of on/off settings (notifications, drag-and-drop, permissions, privacy) saved in localStorage. Any button with a data-setting attribute reads and flips its matching value, and every other part of the app checks getToggle("name") before it acts  so turning a setting off actually changes real behavior, not just a switch that looks pressed.
+   What it does: Keeps one object of on/off settings (notifications, drag-and-drop, permissions, privacy) saved in localStorage. Any button with a data-setting attribute reads and flips its matching value,
+and every other part of the app checks getToggle("name") before it acts  so turning a setting off actually changes real behavior, not just a switch that looks pressed.
+   
    Why I built it this way: I wanted one single place that owns all the settings instead of a separate variable for each one, so adding a new setting later just means adding one line to TOGGLE_DEFAULTS and one button in the HTML with the matching data-setting name, instead of writing new JavaScript every time.
 
 2. File: script.js 
    Commit: https://kensho18.github.io/DropHub/
    What it does: When a file is uploaded, its actual file data is saved into the browser's IndexedDB (not just its name), and a small record (name, size, type, time) is saved to localStorage. The Home page reads that record list, shows the 10 most recent uploads with a "x minutes ago" time, and lets you download the real file back out or copy its contents, using the saved IndexedDB data.
+   
    Why I built it this way: localStorage can only hold text, not actual files, so I used IndexedDB alongside it — localStorage for the small list info that's cheap to read often, and IndexedDB for the heavier file data that's only read when someone clicks Download or Copy.
 
 3. File: index.html + script.js 
    Commit: https://kensho18.github.io/DropHub/
+   
    What it does: Lets you change your display name, change your password (checking all three boxes are filled, the new password is at least 6 characters, and both new-password boxes match before accepting it), and link/unlink Google as a provider — all stored and read back from localStorage.
+   
    Why I built it this way: I kept the password check as simple client-side validation with clear error messages, since there's no real backend yet to check against  the goal was to show the right kind of error for each specific mistake (empty box vs. too short vs. mismatched), not just one generic error.
 
 AI-written code I understand best:
 - File: script.js
+  
 - Commit: https://kensho18.github.io/DropHub/
+  
 - What it does: Loops through every .view section and every nav button, and turns on the active class only for the one matching the page name that was clicked  that's what makes the site switch "pages" without actually reloading anything. It also calls renderRecent() when switching to Home and showAccountName() when switching to Profile, so those pages always show fresh data.
+  
 - Why we kept it: It's a simple, reusable pattern — any new page I add later just needs a section with a matching id="view-name" and a nav button with data-view="name", and this function already knows how to handle it without being changed.
 
 (If there are other teammates: each person copies the ### yourgithubname heading above and fills in their own parts.)
