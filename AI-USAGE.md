@@ -91,9 +91,9 @@ Commit: https://kensho18.github.io/DropHub/
 
 WHO WROTE WHAT (per person, 30 points each)
 
-liightsukii
-kensho18
-hans-again
+liightsukii/
+kensho18/
+hans-again/
 Victorwembanyama1
 
 Parts we wrote as a group
