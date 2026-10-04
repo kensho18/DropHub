@@ -54,7 +54,7 @@ This is one shared file for the whole group. Parts 1 and 2 are written together,
    We kept/changed: We kept it, and kept updating it whenever the actual site changed.
    Commit: https://kensho18.github.io/DropHub/
 
- 2. Where the AI got it wrong
+ Where the AI got it wrong
 (3 real cases  25 points)
 
 1. What it gave us: A style.css file written to match HTML the AI assumed we had, without checking our real file first.
