@@ -105,12 +105,15 @@ Commit: https://kensho18.github.io/DropHub/
 What it does: It keeps one object of on/off settings (notifications, drag-and-drop, permissions, privacy) in localStorage. Any button with a data-setting attribute flips its matching setting. The rest of the app checks getToggle("name") before it acts, so turning a setting off really changes what the app does.
 Why I built it this way: I wanted one place to control all settings. To add a new one, I only add one line to TOGGLE_DEFAULTS and one button in the HTML. I do not need to write new JavaScript.
 
+
 liightsukii/kensho18
+
 2. File storage and recent uploads
 File: script.js
 Commit: https://kensho18.github.io/DropHub/
 What it does: When you upload a file, the real file data goes into IndexedDB. A small record (name, size, type, time) goes into localStorage. The Home page shows the 10 most recent uploads with a "x minutes ago" time. You can download the file or copy its contents.
 Why I built it this way: localStorage can only hold text, not files. So I use localStorage for the small list, which is quick to read, and IndexedDB for the big file data, which is only read when someone clicks Download or Copy.
+
 
 hans-again/Victorwembanyama1
 3. Profile page
@@ -118,6 +121,7 @@ File: index.html + script.js
 Commit: https://kensho18.github.io/DropHub/
 What it does: You can change your display name, change your password, and link or unlink Google. Everything is saved in localStorage. The password change checks that all three boxes are filled, the new password is at least 6 characters, and both new-password boxes match.
 Why I built it this way: There is no real backend yet, so I kept it as simple checks in the browser. I wanted a clear error for each mistake (empty box, too short, not matching) instead of one general error.
+
 
 hans-again/Victorwembanyama1
 AI-written code I understand best
